@@ -50,7 +50,7 @@ if (contactForm) {
 
         setTimeout(() => {
             btn.innerText = '¡Mensaje Enviado!';
-            btn.style.backgroundColor = '#2D6A4F';
+            btn.style.backgroundColor = '#1D9E75';
             contactForm.reset();
             
             setTimeout(() => {
@@ -61,3 +61,23 @@ if (contactForm) {
         }, 1500);
     });
 }
+
+// ── TABS DE SERVICIOS ──────────────────────────────────────
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabPanels = document.querySelectorAll('.tab-panel');
+
+tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-tab');
+
+        // Desactivar todos
+        tabBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+        tabPanels.forEach(p => p.classList.remove('active'));
+
+        // Activar el seleccionado
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+        const panel = document.getElementById(targetId);
+        if (panel) panel.classList.add('active');
+    });
+});

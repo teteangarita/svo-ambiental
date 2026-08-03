@@ -494,8 +494,331 @@ input:focus, textarea:focus {
 }
 
 /* ============================================================
+   VALUE PROP AMPLIADA — pilares 3 columnas
+============================================================ */
+.value-inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.value-text h2 { color: var(--green-dark); margin-bottom: 12px; }
+.value-text > p { color: var(--text-muted); font-size: 1rem; margin-bottom: 6px; }
+
+.pilares-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin: 24px 0;
+}
+.pilar-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--gray-soft);
+  border-top: 3px solid var(--green);
+  border-radius: var(--radius);
+  padding: 20px 18px;
+}
+.pilar-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.pilar-item strong {
+  display: block;
+  font-size: 1rem;
+  color: var(--green-dark);
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 4px;
+}
+.pilar-item p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+.value-conclusion {
+  font-size: 1rem;
+  color: var(--text);
+  margin-top: 4px !important;
+}
+
+/* ============================================================
+   TABS DE SERVICIOS
+============================================================ */
+.tabs-wrapper {
+  margin-top: 36px;
+}
+
+.tabs-nav {
+  display: flex;
+  gap: 8px;
+  border-bottom: 2px solid var(--separator);
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: var(--transition);
+  margin-bottom: -2px;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.tab-btn i {
+  font-size: 1.1rem;
+}
+.tab-btn:hover {
+  color: var(--green-dark);
+  background: var(--green-light);
+}
+.tab-btn.active {
+  color: var(--green-dark);
+  border-bottom-color: var(--green);
+  background: var(--green-light);
+}
+
+.tab-panel {
+  display: none;
+  animation: fadeTab 0.35s ease;
+}
+.tab-panel.active {
+  display: block;
+}
+@keyframes fadeTab {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   ¿POR QUÉ SVO?
+============================================================ */
+.why-svo {
+  background: var(--gray-soft);
+}
+
+.why-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: start;
+}
+
+.why-checks .badge { margin-bottom: 14px; }
+.why-checks h2 {
+  color: var(--green-dark);
+  margin-bottom: 28px;
+  line-height: 1.25;
+}
+
+.check-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.check-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.97rem;
+  color: var(--text);
+  font-weight: 500;
+}
+.check-list li i {
+  font-size: 1.3rem;
+  color: var(--green);
+  flex-shrink: 0;
+}
+
+.enfoque-card {
+  background: var(--white);
+  border-top: 3px solid var(--green);
+  border-radius: var(--radius);
+  padding: 36px 32px;
+  box-shadow: 0 4px 20px rgba(8,80,65,0.07);
+}
+.enfoque-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 16px;
+}
+.enfoque-card p {
+  color: var(--text-muted);
+  font-size: 0.94rem;
+  line-height: 1.75;
+  margin-bottom: 12px;
+}
+.enfoque-card p strong { color: var(--green-dark); }
+
+/* ============================================================
+   ABOUT — perfil integrado en columna derecha
+============================================================ */
+.profile-strip-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--gray-soft);
+  border-top: 3px solid var(--green);
+  border-radius: var(--radius);
+  padding: 28px;
+}
+.profile-photo-lg {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--green-light);
+  flex-shrink: 0;
+}
+.profile-photo-lg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.profile-info-inner h3 {
+  font-size: 1.05rem;
+  color: var(--green-dark);
+  margin-bottom: 4px;
+}
+.profile-info-inner .subtitle {
+  color: var(--green);
+  font-size: 0.84rem;
+  font-weight: 600;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+.profile-info-inner p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+/* ============================================================
+   TEAM MEMBER CARDS — tarjetas expandidas con foto + bio
+============================================================ */
+.team-member-card {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 40px;
+  align-items: start;
+  background: var(--white);
+  border-top: 3px solid var(--green);
+  border-radius: var(--radius);
+  padding: 36px;
+  margin-top: 28px;
+  box-shadow: 0 4px 24px rgba(8,80,65,0.07);
+  transition: box-shadow 0.3s ease;
+}
+.team-member-card:hover {
+  box-shadow: 0 8px 40px rgba(29,158,117,0.13);
+}
+
+.team-member-photo {
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  max-height: 380px;
+}
+.team-member-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+.team-member-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.team-member-info h3 {
+  font-size: 1.4rem;
+  color: var(--green-dark);
+  margin-bottom: 4px;
+}
+.team-member-role {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--green);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px !important;
+}
+.team-member-quote {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 0 !important;
+}
+
+.linkedin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.linkedin-btn i { font-size: 1rem; }
+
+.team-member-bio {
+  border-top: 0.5px solid var(--separator);
+  padding-top: 18px;
+  margin-bottom: 20px;
+}
+.team-member-bio p {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.78;
+  margin-bottom: 12px;
+}
+.team-member-bio p:last-child { margin-bottom: 0; }
+
+.team-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 0.5px solid var(--separator);
+}
+.tag {
+  display: inline-block;
+  background: var(--green-light);
+  color: var(--green-dark);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================================
    RESPONSIVE
 ============================================================ */
+@media (max-width: 900px) {
+  .pilares-grid       { grid-template-columns: 1fr; }
+  .why-grid           { grid-template-columns: 1fr; gap: 36px; }
+  .team-member-card   { grid-template-columns: 1fr; }
+  .team-member-photo  { max-height: 260px; aspect-ratio: 4 / 3; }
+}
+
 @media (max-width: 768px) {
   .logo          { height: 64px; }
   .footer-logo   { height: 70px; }
@@ -506,4 +829,8 @@ input:focus, textarea:focus {
   nav            { display: none; }
   .hero-btns     { flex-direction: column; }
   .services-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  .tabs-nav      { gap: 4px; }
+  .tab-btn       { padding: 10px 12px; font-size: 0.8rem; }
+  .tab-btn span  { display: none; }
+  .tab-btn i     { font-size: 1.3rem; }
 }
