@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin - Agregar entrada al blog</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { padding: 24px; max-width: 900px; margin: auto; }
+    label { display:block; margin-top:12px; }
+    input, textarea, select { width:100%; padding:8px; margin-top:6px; }
+    .row { display:flex; gap:10px; }
+    .row > * { flex:1 }
+    .note { background:#f7f7f7; padding:10px; border-left:4px solid #1D9E75; margin-top:12px }
+    .btn { display:inline-block; margin-top:12px; padding:10px 14px; background:#1D9E75; color:white; border-radius:4px; text-decoration:none }
+    .muted { color:#666; font-size:0.9rem }
+    pre { white-space:pre-wrap; background:#111; color:#eee; padding:10px }
+  </style>
+</head>
+<body>
+  <h1>Agregar entrada al blog</h1>
+  <p class="muted">Rellena el formulario y copia el JSON resultante para pegarlo en <strong>data/posts.json</strong>. Opcionalmente puedes usar un token de GitHub para que la página intente actualizar automáticamente el archivo.</p>
+
+  <form id="post-form">
+    <label>Título
+      <input id="title" required>
+    </label>
+    <label>Extracto (breve descripción)
+      <textarea id="excerpt" rows="3"></textarea>
+    </label>
+    <div class="row">
+      <label>URL del post (ruta relativa)
+        <input id="url" placeholder="posts/mi-post.html">
+      </label>
+      <label>Fecha
+        <input id="date" type="date">
+      </label>
+    </div>
+    <label>Icono (HTML corto, opcional)
+      <input id="icon" placeholder="<i class=\"ti ti-calendar-check\"></i>">
+    </label>
+
+    <div class="note">
+      <strong>Opcional: Actualizar en GitHub</strong>
+      <p class="muted">Si quieres que la página suba el cambio automáticamente al repositorio, pega un <em>Personal Access Token</em> con permisos de repositorio (repo) y completa <em>owner</em> y <em>repo</em>. <strong>Advertencia:</strong> usar un token en el navegador expone el token en la máquina; es más seguro usar la opción de copia manual.</p>
+      <label>Token GitHub (opcional)
+        <input id="token" placeholder="ghp_xxx...">
+      </label>
+      <div class="row">
+        <label>Owner
+          <input id="owner" placeholder="usuario o organización">
+        </label>
+        <label>Repo
+          <input id="repo" placeholder="nombre-del-repo">
+        </label>
+      </div>
+    </div>
+
+    <button class="btn" id="generate">Generar entrada</button>
+  </form>
+
+  <section id="preview" style="margin-top:18px;">
+    <h2>Vista previa / JSON</h2>
+    <div id="result" class="note">Rellena el formulario y pulsa "Generar entrada".</div>
+    <button id="copyBtn" class="btn" style="display:none">Copiar JSON al portapapeles</button>
+  </section>
+
+  <section style="margin-top:18px;">
+    <h2>Entradas actuales</h2>
+    <div id="postsPreview">Cargando…</div>
+  </section>
+
+  <script>
+    async function fetchPosts() {
+      try {
+        const r = await fetch('data/posts.json', {cache: 'no-store'});
+        if (!r.ok) throw new Error('No se pudo cargar data/posts.json');
+        const posts = await r.json();
+        return posts;
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+    }
+
+    function renderPostsList(posts) {
+      const container = document.getElementById('postsPreview');
+      if (!posts) {
+        container.innerHTML = '<p class="muted">No se pudo cargar posts (quizá usando GitHub Pages CORS).</p>';
+        return;
+      }
+      container.innerHTML = posts.map(p => `
+        <div style="padding:8px;border-bottom:1px solid #eee">
+          <strong>${p.title}</strong> <span class="muted">— ${p.date || ''}</span>
+          <div class="muted">${p.excerpt || ''}</div>
+          <div><a href="${p.url}">${p.url}</a></div>
+        </div>
+      `).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const posts = await fetchPosts();
+      renderPostsList(posts);
+
+      const form = document.getElementById('post-form');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = document.getElementById('title').value.trim();
+        const excerpt = document.getElementById('excerpt').value.trim();
+        const url = document.getElementById('url').value.trim() || '#';
+        const date = document.getElementById('date').value || new Date().toISOString().slice(0,10);
+        const icon = document.getElementById('icon').value.trim();
+        const token = document.getElementById('token').value.trim();
+        const owner = document.getElementById('owner').value.trim();
+        const repo = document.getElementById('repo').value.trim();
+
+        const newPost = { title, excerpt, url, date, icon };
+
+        // Si no hay posts cargados, mostramos el objeto y permitimos copia manual
+        if (!posts) {
+          const out = [newPost];
+          document.getElementById('result').innerHTML = '<pre>'+JSON.stringify(out, null, 2)+'</pre>';
+          document.getElementById('copyBtn').style.display = 'inline-block';
+          document.getElementById('copyBtn').onclick = () => navigator.clipboard.writeText(JSON.stringify(out, null, 2));
+          return;
+        }
+
+        // Si hay token y owner/repo, intentar integrar via GitHub API
+        if (token && owner && repo) {
+          // Confirmación y aviso
+          if (!confirm('La página usará el token provisto para modificar data/posts.json en el repo remoto. ¿Continuar?')) return;
+
+          try {
+            // Obtener el archivo actual para conocer el SHA
+            const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/data/posts.json`;
+            const getRes = await fetch(apiUrl, { headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' } });
+            if (!getRes.ok) throw new Error('No se pudo leer posts.json desde GitHub: ' + getRes.status);
+            const fileData = await getRes.json();
+            const content = atob(fileData.content.replace(/\n/g,''));
+            const arr = JSON.parse(content);
+            arr.unshift(newPost);
+            const newContent = btoa(unescape(encodeURIComponent(JSON.stringify(arr, null, 2))));
+
+            const putRes = await fetch(apiUrl, {
+              method: 'PUT',
+              headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' },
+              body: JSON.stringify({ message: 'Add post via admin UI', content: newContent, sha: fileData.sha })
+            });
+            if (!putRes.ok) {
+              const err = await putRes.json();
+              throw new Error('Error al subir: ' + JSON.stringify(err));
+            }
+
+            document.getElementById('result').innerHTML = '<div class="note">Entrada añadida en el repo remoto. Verifica GitHub.</div>';
+            // actualizar preview local
+            renderPostsList(arr);
+            document.getElementById('copyBtn').style.display = 'none';
+          } catch (err) {
+            console.error(err);
+            document.getElementById('result').innerHTML = '<div class="note">Error: '+String(err)+'</div>';
+            // además ofrecer JSON para copia manual
+            const merged = [newPost].concat(posts);
+            document.getElementById('result').innerHTML += '<pre>'+JSON.stringify(merged, null, 2)+'</pre>';
+            document.getElementById('copyBtn').style.display = 'inline-block';
+            document.getElementById('copyBtn').onclick = () => navigator.clipboard.writeText(JSON.stringify(merged, null, 2));
+          }
+
+          return;
+        }
+
+        // Sin token: mostrar JSON combinado para copiar y pegar manualmente
+        const merged = [newPost].concat(posts);
+        document.getElementById('result').innerHTML = '<pre>'+JSON.stringify(merged, null, 2)+'</pre>';
+        document.getElementById('copyBtn').style.display = 'inline-block';
+        document.getElementById('copyBtn').onclick = () => navigator.clipboard.writeText(JSON.stringify(merged, null, 2));
+
+      });
+    });
+  </script>
+</body>
+</html>
