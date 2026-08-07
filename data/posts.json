@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Cómo ingresar un proyecto al SEIA correctamente",
+    "excerpt": "Guía práctica con los pasos clave para evitar retrasos y errores comunes.",
+    "url": "posts/seia-como-ingresar.html",
+    "date": "2026-07-01",
+    "icon": "<i class=\"ti ti-calendar-check\"></i>"
+  },
+  {
+    "title": "Errores comunes en cumplimiento ambiental",
+    "excerpt": "Principales fallos que vemos en auditorías y cómo prevenirlos.",
+    "url": "posts/errores-cumplimiento.html",
+    "date": "2026-06-15",
+    "icon": "<i class=\"ti ti-list-check\"></i>"
+  },
+  {
+    "title": "Qué hacer cuando la SMA inicia un procedimiento",
+    "excerpt": "Pasos prácticos para responder a fiscalizaciones y sanciones.",
+    "url": "posts/que-hacer-sma.html",
+    "date": "2026-05-20",
+    "icon": "<i class=\"ti ti-shield-check\"></i>"
+  }
+]

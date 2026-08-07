@@ -38,6 +38,39 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
+// ── CARGA DINÁMICA DEL BLOG (desde data/posts.json) ─────────────────
+async function loadBlogPosts() {
+    const container = document.getElementById('blog-list');
+    if (!container) return;
+    try {
+        const res = await fetch('data/posts.json');
+        if (!res.ok) throw new Error('No se pudo cargar posts.json');
+        const posts = await res.json();
+        if (!Array.isArray(posts) || posts.length === 0) {
+            container.innerHTML = '<p>No hay entradas disponibles.</p>';
+            return;
+        }
+        container.innerHTML = posts.map(p => `
+            <div class="service-card blog-card reveal">
+                <div class="icon">${p.icon || ''}</div>
+                <h4>${p.title}</h4>
+                <p>${p.excerpt || ''}</p>
+                <a href="${p.url || '#'}" class="read-more">Leer artículo →</a>
+            </div>
+        `).join('');
+
+        // Re-observe reveal elements añadidos dinámicamente
+        document.querySelectorAll('.reveal').forEach(element => {
+            revealOnScroll.observe(element);
+        });
+    } catch (err) {
+        console.error(err);
+        container.innerHTML = '<p>Error cargando entradas.</p>';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadBlogPosts);
+
 // Form Submission Feedback (Mock)
 const contactForm = document.getElementById('form-consulta');
 if (contactForm) {
